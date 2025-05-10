@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/constants/interfaces.ts","./src/controllers/todo.controller.ts","./src/database/db.ts","./src/models/todo.schema.ts","./src/routes/todo.routes.ts","./src/validations/validationmiddleware.ts"],"version":"5.8.2"}
