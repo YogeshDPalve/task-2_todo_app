@@ -45,7 +45,7 @@ export const addTodo = async (req: Request, res: Response): Promise<any> => {
     }
 
     return res.status(201).send({
-      success: false,
+      success: true,
       message: "Todo added successfully",
     });
   } catch (error) {
