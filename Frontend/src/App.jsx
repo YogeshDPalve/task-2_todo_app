@@ -18,8 +18,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "./components/ui/input";
 import { Textarea } from "./components/ui/textarea";
-import { useAddTodoMutation } from "./features/api/todoApi";
+import { useAddTodoMutation, useGetTodoQuery } from "./features/api/todoApi";
 import { toast } from "sonner";
+import TodoSkeleton from "./components/TodoSkeleton";
 // ✅ Sample todos with unique `id`
 const initialTodos = [
   {
@@ -56,10 +57,12 @@ const initialTodos = [
 
 const result = destructureDate(new Date());
 function App() {
+  //! ----- add todo ---------
   const [formData, setFormData] = useState({
     title: "",
     description: "",
   });
+  const [todos, setTodos] = useState(initialTodos);
   const [addTodo, { isLoading: addTodoLoading }] = useAddTodoMutation();
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,27 +76,26 @@ function App() {
     try {
       const addTodoData = await addTodo(formData).unwrap();
       toast.success(addTodoData.message || "Todo added successfully.");
-      setTimeout(() => {
-        window.location.reload();
-      }, 700);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 700);
     } catch (error) {
       console.log(error);
-      toast.error(err?.data?.message || err?.data?.errors?.[0]?.msg || "Something went wrong");
-    }
-  };
-  // -------------------------------------------------------------------------------------
-  const [todos, setTodos] = useState(initialTodos);
-  // ✅ Mock API request function
-  const updateReadStatus = async (id, isread) => {
-    try {
-      // Optimistically update state
-      setTodos((prev) =>
-        prev.map((todo) => (todo.id === id ? { ...todo, isread } : todo))
+      toast.error(
+        err?.data?.message ||
+          err?.data?.errors?.[0]?.msg ||
+          "Something went wrong"
       );
-    } catch (error) {
-      console.error("Failed to update read status:", error);
     }
   };
+
+  //! -------- get todos----------
+  const { data: getTodo, isLoading: isTodoLoading } = useGetTodoQuery();
+
+  // -------------------------------------------------------------------------------------
+
+ 
+ 
 
   return (
     <>
@@ -161,7 +163,7 @@ function App() {
                 <Button
                   disabled={addTodoLoading}
                   type="submit"
-                  className="cursor-pointer"
+                  className="cursor-pointer "
                 >
                   {addTodoLoading ? (
                     <>
@@ -177,53 +179,57 @@ function App() {
         </Dialog>
 
         <CardContent>
-          {todos.map((todo) => (
-            <Card key={todo.id} className="md:p-4 my-2">
-              <div className="flex justify-between items-center mx-4">
-                <div className="flex gap-6 mr-2 items-center">
-                  <Checkbox
-                    className="cursor-pointer"
-                    checked={!!todo.isread}
-                    onCheckedChange={(checked) =>
-                      updateReadStatus(todo.id, checked ? 1 : 0)
-                    }
-                  />
-                  <div>
-                    <Label
-                      className={`text-lg font-semibold tracking-wide font-nunito ${
-                        todo.isread
-                          ? "text-muted-foreground line-through"
-                          : "text-stone-900"
-                      }`}
+          {isTodoLoading ? (
+            <TodoSkeleton />
+          ) : (
+            getTodo.getTodos.map((todo) => (
+              <Card key={todo._id} className="md:p-4 my-2">
+                <div className="flex justify-between items-center mx-4">
+                  <div className="flex gap-6 mr-2 items-center">
+                    <Checkbox
+                      className="cursor-pointer"
+                      checked={!!todo.isread}
+                      onCheckedChange={(checked) =>
+                        updateReadStatus(todo.id, checked ? 1 : 0)
+                      }
+                    />
+                    <div>
+                      <Label
+                        className={`text-lg font-semibold tracking-wide font-nunito ${
+                          todo.isread
+                            ? "text-muted-foreground line-through"
+                            : "text-stone-900"
+                        }`}
+                      >
+                        {todo.title}
+                      </Label>
+                      <p
+                        className={`text-sm md:text-base ${
+                          todo.isread
+                            ? "text-muted-foreground "
+                            : "text-stone-600"
+                        }`}
+                      >
+                        {todo.description}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex sm:flex-row flex-col gap-1">
+                    <Button
+                      size="icon"
+                      className="cursor-pointer p-0"
+                      variant="outline"
                     >
-                      {todo.title}
-                    </Label>
-                    <p
-                      className={`text-sm md:text-base ${
-                        todo.isread
-                          ? "text-muted-foreground "
-                          : "text-stone-600"
-                      }`}
-                    >
-                      {todo.description}
-                    </p>
+                      <Edit />
+                    </Button>
+                    <Button variant="destructive" className="cursor-pointer">
+                      <Trash2 />
+                    </Button>
                   </div>
                 </div>
-                <div className="flex sm:flex-row flex-col gap-1">
-                  <Button
-                    size="icon"
-                    className="cursor-pointer p-0"
-                    variant="outline"
-                  >
-                    <Edit />
-                  </Button>
-                  <Button variant="destructive" className="cursor-pointer">
-                    <Trash2 />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))
+          )}
         </CardContent>
       </Card>
     </>

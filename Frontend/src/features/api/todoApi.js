@@ -20,6 +20,21 @@ export const todoApi = createApi({
       }),
       invalidatesTags: ["Refetch_todos"],
     }),
+    getTodo: builder.query({
+      query: () => ({
+        url: "/list",
+        method: "GET",
+      }),
+      providesTags: ["Refetch_todos"],
+    }),
+    removeTodo: builder.mutation({
+      query: () => ({
+        url: "/remove",
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Refetch_todos"],
+    }),
   }),
 });
-export const { useAddTodoMutation } = todoApi;
+export const { useAddTodoMutation, useGetTodoQuery, useRemoveTodoMutation } =
+  todoApi;

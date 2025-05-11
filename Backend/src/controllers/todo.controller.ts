@@ -6,7 +6,7 @@ export const getTodos = async (req: Request, res: Response): Promise<any> => {
   try {
     const getTodos = await todoModel.find();
 
-    if (!getTodos || getTodos.length === 0) {
+    if (!getTodos) {
       return res.status(400).send({
         success: false,
         message: "Todos not found",
