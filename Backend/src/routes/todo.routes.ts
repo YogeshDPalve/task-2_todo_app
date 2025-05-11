@@ -7,6 +7,7 @@ import {
 import { ValidationChain } from "express-validator";
 import {
   addTodo,
+  getTodoById,
   getTodos,
   removeTodo,
   updateStatus,
@@ -16,6 +17,7 @@ import {
 const router: Router = Router();
 
 router.get("/list", getTodos);
+router.get("/", getTodoById);
 router.post("/add", addTodoValidation as ValidationChain[], addTodo);
 router.post(
   "/update-status/:todoId",

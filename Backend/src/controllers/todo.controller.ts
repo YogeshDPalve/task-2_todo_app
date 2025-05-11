@@ -6,7 +6,7 @@ export const getTodos = async (req: Request, res: Response): Promise<any> => {
   try {
     const getTodos = await todoModel.find();
 
-    if (!getTodos || getTodos.length === 0) {
+    if (!getTodos) {
       return res.status(400).send({
         success: false,
         message: "Todos not found",
@@ -45,7 +45,7 @@ export const addTodo = async (req: Request, res: Response): Promise<any> => {
     }
 
     return res.status(201).send({
-      success: false,
+      success: true,
       message: "Todo added successfully",
     });
   } catch (error) {
@@ -131,7 +131,6 @@ export const updateStatus = async (
 
 export const updateTodo = async (req: Request, res: Response): Promise<any> => {
   try {
-    console.log("from start of controller");
     const { todoId, title, description }: UpdateTodo = req.body;
     const todo = await todoModel.findById(todoId);
     if (!todo) {
@@ -151,6 +150,31 @@ export const updateTodo = async (req: Request, res: Response): Promise<any> => {
     });
   } catch (error) {
     console.error(error);
+    return res.status(500).send({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getTodoById = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    console.log(req.query);
+    const { todoId } = req.query;
+    if (!todoId) {
+      return res.status(404).send({
+        success: false,
+        message: "todoId is required",
+      });
+    }
+    const todo = await todoModel.findById(todoId);
+    return res.status(200).send({
+      todo,
+    });
+  } catch (error) {
     return res.status(500).send({
       success: false,
       message: "Internal server error",
