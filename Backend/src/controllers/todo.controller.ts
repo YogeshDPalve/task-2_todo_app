@@ -131,7 +131,6 @@ export const updateStatus = async (
 
 export const updateTodo = async (req: Request, res: Response): Promise<any> => {
   try {
-    console.log("from start of controller");
     const { todoId, title, description }: UpdateTodo = req.body;
     const todo = await todoModel.findById(todoId);
     if (!todo) {
@@ -151,6 +150,31 @@ export const updateTodo = async (req: Request, res: Response): Promise<any> => {
     });
   } catch (error) {
     console.error(error);
+    return res.status(500).send({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getTodoById = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    console.log(req.query);
+    const { todoId } = req.query;
+    if (!todoId) {
+      return res.status(404).send({
+        success: false,
+        message: "todoId is required",
+      });
+    }
+    const todo = await todoModel.findById(todoId);
+    return res.status(200).send({
+      todo,
+    });
+  } catch (error) {
     return res.status(500).send({
       success: false,
       message: "Internal server error",

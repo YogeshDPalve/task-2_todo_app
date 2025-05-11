@@ -28,13 +28,40 @@ export const todoApi = createApi({
       providesTags: ["Refetch_todos"],
     }),
     removeTodo: builder.mutation({
-      query: () => ({
-        url: "/remove",
+      query: (todoId) => ({
+        url: `/remove/${todoId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Refetch_todos"],
     }),
+    updateTodo: builder.mutation({
+      query: (updateData) => ({
+        url: `/update`,
+        method: "PUT",
+        body: updateData,
+      }),
+      invalidatesTags: ["Refetch_todos"],
+    }),
+    updateStatus: builder.mutation({
+      query: (todoId) => ({
+        url: `/update-status/${todoId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Refetch_todos"],
+    }),
+    getTodoById: builder.query({
+      query: (todoId) => ({
+        url: `/?todoId=${todoId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
-export const { useAddTodoMutation, useGetTodoQuery, useRemoveTodoMutation } =
-  todoApi;
+export const {
+  useAddTodoMutation,
+  useGetTodoQuery,
+  useRemoveTodoMutation,
+  useUpdateTodoMutation,
+  useGetTodoByIdQuery,
+  useUpdateStatusMutation,
+} = todoApi;
