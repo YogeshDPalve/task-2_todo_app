@@ -118,10 +118,17 @@ function Todo() {
 
   return (
     <>
-      <div>
-        <h1 className="text-center font-bold text-2xl md:text-3xl font-winky tracking-normal text-blue-600 m-3">
+      <div className="text-center ">
+        <h1 className="font-bold text-2xl md:text-3xl font-winky tracking-normal text-blue-600 m-3">
           Daily Todos List
         </h1>
+        <div className="font-winky text-muted-foreground font-thin text-xs mb-1">
+          <p>
+            My free instance will spin down with inactivity, which can delay
+            requests by 50 seconds or more.
+          </p>
+          <p> Please wait a while if system takes time to respond.</p>
+        </div>
       </div>
 
       <Card className="lg:w-[50%] md:w-[60%] sm:mx-auto mx-2 relative">
